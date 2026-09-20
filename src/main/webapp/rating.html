@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Coffee | Customer Rating</title>
+
+    <link rel="stylesheet"
+          href="css/style.css">
+
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600;1,700&display=swap"
+          rel="stylesheet">
+
+</head>
+
+
+<body>
+
+
+<header class="navbar">
+
+    <div class="logo">
+        ☕ Coffee
+    </div>
+
+
+    <nav>
+
+        <a href="index.html">
+            Home
+        </a>
+
+        <a href="about.html">
+            About
+        </a>
+
+        <a href="menu.html">
+            Menu
+        </a>
+
+        <a href="testimonials.html">
+            Testimonials
+        </a>
+
+        <a href="contact.html">
+            Contact
+        </a>
+
+    </nav>
+
+
+    <a href="order.html"
+       class="order-btn">
+
+        Order Now
+
+    </a>
+
+</header>
+
+
+
+<section class="rating-page">
+
+
+    <div class="rating-page-title">
+
+        <p>
+            SHARE YOUR EXPERIENCE
+        </p>
+
+
+        <h1>
+            Customer <span>Rating</span>
+        </h1>
+
+
+        <div class="title-line"></div>
+
+
+        <p>
+            We would love to know what you think about our coffee.
+        </p>
+
+    </div>
+
+
+
+    <div class="rating-form-box">
+
+
+        <form id="ratingForm">
+
+
+            <!-- NAME -->
+
+            <div class="form-group">
+
+                <label>
+                    Your Name
+                </label>
+
+                <input
+                    type="text"
+                    id="customerName"
+                    name="customerName"
+                    placeholder="Enter your name"
+                    required>
+
+            </div>
+
+
+
+            <!-- STAR RATING -->
+
+            <div class="rating-group">
+
+                <label>
+                    Your Rating
+                </label>
+
+
+                <div class="stars"
+                     id="stars">
+
+
+                    <span data-rating="1">
+                        ★
+                    </span>
+
+                    <span data-rating="2">
+                        ★
+                    </span>
+
+                    <span data-rating="3">
+                        ★
+                    </span>
+
+                    <span data-rating="4">
+                        ★
+                    </span>
+
+                    <span data-rating="5">
+                        ★
+                    </span>
+
+
+                </div>
+
+
+                <p id="ratingText">
+                    Select your rating
+                </p>
+
+
+                <input
+                    type="hidden"
+                    id="rating"
+                    name="rating"
+                    value="">
+
+            </div>
+
+
+
+            <!-- FEEDBACK -->
+
+            <div class="form-group">
+
+                <label>
+                    Your Feedback
+                </label>
+
+
+                <textarea
+                    id="feedback"
+                    name="feedback"
+                    rows="5"
+                    placeholder="Tell us about your experience..."></textarea>
+
+            </div>
+
+
+
+            <!-- SUBMIT -->
+
+            <button
+                type="submit"
+                class="rating-submit">
+
+                Submit Rating
+
+            </button>
+
+
+            <p id="ratingResult"></p>
+
+
+        </form>
+
+
+    </div>
+
+
+</section>
+
+
+
+<footer>
+
+    <div class="footer-logo">
+        ☕ Coffee
+    </div>
+
+
+    <p>
+        Fresh coffee. Good moments. Happy people.
+    </p>
+
+
+    <p class="copyright">
+        © 2026 Coffee. All Rights Reserved.
+    </p>
+
+</footer>
+
+
+
+<script>
+
+
+/* =====================================================
+   STAR RATING
+   ===================================================== */
+
+const stars =
+    document.querySelectorAll("#stars span");
+
+const ratingInput =
+    document.getElementById("rating");
+
+const ratingText =
+    document.getElementById("ratingText");
+
+
+const ratingMessages = {
+
+    1: "Poor",
+
+    2: "Fair",
+
+    3: "Good",
+
+    4: "Very Good",
+
+    5: "Excellent"
+
+};
+
+
+
+stars.forEach(function(star) {
+
+
+    star.addEventListener("click", function() {
+
+
+        const selectedRating =
+            Number(this.dataset.rating);
+
+
+        ratingInput.value =
+            selectedRating;
+
+
+        stars.forEach(function(item) {
+
+
+            const itemRating =
+                Number(item.dataset.rating);
+
+
+            if (itemRating <= selectedRating) {
+
+                item.classList.add("selected");
+
+            } else {
+
+                item.classList.remove("selected");
+
+            }
+
+        });
+
+
+        ratingText.textContent =
+            ratingMessages[selectedRating];
+
+    });
+
+});
+
+
+
+/* =====================================================
+   SUBMIT RATING
+   ===================================================== */
+
+document
+    .getElementById("ratingForm")
+    .addEventListener("submit", async function(event) {
+
+
+        event.preventDefault();
+
+
+        const customerName =
+            document.getElementById("customerName").value;
+
+
+        const rating =
+            document.getElementById("rating").value;
+
+
+        const feedback =
+            document.getElementById("feedback").value;
+
+
+        const result =
+            document.getElementById("ratingResult");
+
+
+        if (!rating) {
+
+            result.textContent =
+                "Please select a rating.";
+
+            return;
+
+        }
+
+
+        const formData =
+            new URLSearchParams();
+
+
+        formData.append(
+            "customerName",
+            customerName
+        );
+
+
+        formData.append(
+            "rating",
+            rating
+        );
+
+
+        formData.append(
+            "feedback",
+            feedback
+        );
+
+
+        try {
+
+
+            const response =
+                await fetch(
+                    "api/rating",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/x-www-form-urlencoded"
+                        },
+
+                        body: formData
+
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            result.textContent =
+                data.message;
+
+
+            if (data.success) {
+
+                document
+                    .getElementById("ratingForm")
+                    .reset();
+
+
+                ratingInput.value = "";
+
+
+                ratingText.textContent =
+                    "Select your rating";
+
+
+                stars.forEach(function(star) {
+
+                    star.classList.remove(
+                        "selected"
+                    );
+
+                });
+
+            }
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            result.textContent =
+                "Unable to submit rating.";
+
+        }
+
+    });
+
+</script>
+
+
+</body>
+
+</html>

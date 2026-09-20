@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Coffee | Menu</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+          rel="stylesheet">
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+
+<header class="navbar">
+
+    <div class="logo">
+        ☕ Coffee
+    </div>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="menu.html" class="active">Menu</a>
+        <a href="testimonials.html">Testimonials</a>
+        <a href="rating.html">Rating</a>
+        <a href="contact.html">Contact</a>
+    </nav>
+
+    <a href="order.html" class="order-btn">
+        Order Now
+    </a>
+
+</header>
+<!-- ================= MENU ================= -->
+
+<section class="menu-page">
+
+    <div class="menu-page-title">
+
+        <p>OUR MENU</p>
+
+        <h1>
+            Choose Your <span>Favorite Coffee</span>
+        </h1>
+
+        <div class="title-line"></div>
+
+        <p class="menu-description">
+            Freshly prepared coffee made with premium beans and served with love.
+        </p>
+
+    </div>
+
+
+    <div class="menu-page-grid" id="menuContainer">
+
+        <div class="menu-loading">
+            Loading our delicious coffee...
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= FOOTER ================= -->
+
+<footer>
+
+    <div class="footer-logo">
+        ☕ Coffee
+    </div>
+
+    <p>
+        Fresh coffee. Good moments. Happy people.
+    </p>
+
+    <p class="copyright">
+        © 2026 Coffee. All Rights Reserved.
+    </p>
+
+</footer>
+
+
+<script>
+
+async function loadMenu() {
+
+    const container = document.getElementById("menuContainer");
+
+    try {
+
+        const response = await fetch("api/menu");
+
+        if (!response.ok) {
+            throw new Error("Failed to load menu");
+        }
+
+        const menuItems = await response.json();
+
+        container.innerHTML = "";
+
+        menuItems.forEach(item => {
+
+            const card = document.createElement("div");
+
+            card.className = "menu-page-card";
+
+            /*
+             * Select image according to coffee name
+             */
+
+            let imageName = "coffee1.jpeg";
+
+            const coffeeName = item.name.toLowerCase();
+
+            if (coffeeName.includes("espresso")) {
+                imageName = "espresso.jpeg";
+            }
+            else if (coffeeName.includes("cappuccino")) {
+                imageName = "cappuccino.jpeg";
+            }
+            else if (coffeeName.includes("latte")) {
+                imageName = "latte.jpeg";
+            }
+            else if (coffeeName.includes("americano")) {
+                imageName = "americano.jpeg";
+            }
+            else if (coffeeName.includes("mocha")) {
+                imageName = "mocha.jpeg";
+            }
+            else if (coffeeName.includes("cold")) {
+                imageName = "coldcoffee.jpeg";
+            }
+
+            let imageClass = "";
+
+            if (coffeeName.includes("mocha") || coffeeName.includes("cold")) {
+               imageClass = "small-coffee-image";
+            }
+
+            card.innerHTML = `
+
+              <div class="menu-card-image">
+
+                <img
+                   src="${imageName}"
+                   alt="${item.name}"
+                   class="${imageClass}"
+                >
+
+              </div>
+
+
+                <div class="menu-card-content">
+
+                    <h3>
+                        ${item.name}
+                    </h3>
+
+                    <p>
+                        ${item.description}
+                    </p>
+
+
+                    <div class="menu-card-bottom">
+
+                        <span class="menu-price">
+                            ₹${Number(item.price).toFixed(0)}
+                        </span>
+
+
+                        <button
+                            onclick="orderCoffee('${item.name}', ${item.price})">
+                            Order
+                        </button>
+
+                    </div>
+
+                </div>
+
+            `;
+
+            container.appendChild(card);
+
+        });
+
+    }
+    catch (error) {
+
+        container.innerHTML = `
+
+            <div class="menu-error">
+
+                <h3>
+                    Unable to load menu
+                </h3>
+
+                <p>
+                    Please make sure the server is running.
+                </p>
+
+            </div>
+
+        `;
+
+        console.error(error);
+    }
+}
+
+
+function orderCoffee(name, price) {
+
+    window.location.href =
+        "order.html?item=" +
+        encodeURIComponent(name) +
+        "&price=" +
+        encodeURIComponent(price);
+
+}
+
+
+loadMenu();
+
+</script>
+
+</body>
+
+</html>

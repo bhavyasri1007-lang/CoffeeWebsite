@@ -1,0 +1,12 @@
+# macOS
+.DS_Store
+
+# Maven
+target/
+
+# IDE files
+.vscode/
+.idea/
+
+# Java compiled files
+*.class

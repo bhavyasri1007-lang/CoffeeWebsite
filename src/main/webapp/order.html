@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Coffee | Order Now</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600;1,700&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- ================= EMAILJS ================= -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+    <script>
+        emailjs.init({
+            publicKey: "DmRzlsfgWWgnzsoT4"
+        });
+    </script>
+
+</head>
+
+
+<body>
+
+
+<!-- ================= NAVBAR ================= -->
+
+<header class="navbar">
+
+    <div class="logo">
+        ☕ Coffee
+    </div>
+
+    <nav>
+
+        <a href="index.html">
+            Home
+        </a>
+
+        <a href="about.html">
+            About
+        </a>
+
+        <a href="menu.html">
+            Menu
+        </a>
+
+        <a href="testimonials.html">
+            Testimonials
+        </a>
+
+        <a href="rating.html">
+            Rating
+        </a>
+
+        <a href="contact.html">
+            Contact
+        </a>
+
+    </nav>
+
+    <a href="order.html" class="order-btn">
+        Order Now
+    </a>
+
+</header>
+
+
+<!-- ================= ORDER PAGE ================= -->
+
+<section class="order-page">
+
+
+    <div class="order-page-title">
+
+        <p>
+            PLACE YOUR ORDER
+        </p>
+
+        <h1>
+            Order Your <span>Favorite Coffee</span>
+        </h1>
+
+        <div class="title-line"></div>
+
+        <p>
+            Fill in your details and choose your favorite coffee.
+        </p>
+
+    </div>
+
+
+    <!-- ================= ORDER FORM ================= -->
+
+    <div class="order-form-box">
+
+        <form id="orderForm">
+
+
+            <!-- CUSTOMER NAME -->
+
+            <div class="form-group">
+
+                <label>
+                    Your Name
+                </label>
+
+                <input
+                    type="text"
+                    id="customerName"
+                    name="customerName"
+                    placeholder="Enter your name"
+                    required
+                >
+
+            </div>
+
+
+            <!-- CUSTOMER EMAIL -->
+
+            <div class="form-group">
+
+                <label>
+                    Email
+                </label>
+
+                <input
+                    type="email"
+                    id="customerEmail"
+                    name="customerEmail"
+                    placeholder="Enter your email"
+                    required
+                >
+
+            </div>
+
+
+            <!-- ================= COFFEE ITEMS ================= -->
+
+            <div id="coffeeItems">
+
+                <div class="coffee-item">
+
+                    <div class="form-group">
+
+                        <label>
+                            Select Coffee
+                        </label>
+
+                        <select
+                            class="coffeeSelect"
+                            required
+                        >
+
+                            <option value="">
+                                Select your coffee
+                            </option>
+
+                            <option value="Espresso">
+                                Espresso - ₹120
+                            </option>
+
+                            <option value="Cappuccino">
+                                Cappuccino - ₹150
+                            </option>
+
+                            <option value="Latte">
+                                Latte - ₹160
+                            </option>
+
+                            <option value="Americano">
+                                Americano - ₹130
+                            </option>
+
+                            <option value="Mocha">
+                                Mocha - ₹170
+                            </option>
+
+                            <option value="Cold Coffee">
+                                Cold Coffee - ₹180
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Quantity
+                        </label>
+
+                        <input
+                            type="number"
+                            class="quantityInput"
+                            min="1"
+                            value="1"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= ADD COFFEE ================= -->
+
+            <button
+                type="button"
+                id="addCoffeeBtn"
+                class="add-coffee-btn"
+            >
+                + Add Another Coffee
+            </button>
+
+
+            <!-- ================= SELECTED COFFEES ================= -->
+
+            <div
+                id="selectedCoffees"
+                class="selected-coffees"
+            >
+            </div>
+
+
+            <!-- ================= TOTAL ================= -->
+
+            <div class="order-total">
+
+                <span>
+                    Total Price
+                </span>
+
+                <strong id="totalPrice">
+                    ₹0
+                </strong>
+
+            </div>
+
+
+            <!-- ================= PLACE ORDER ================= -->
+
+            <button
+                type="submit"
+                class="order-submit"
+                id="orderSubmitBtn"
+            >
+                Place Order
+            </button>
+
+
+            <p id="orderResult"></p>
+
+
+        </form>
+
+    </div>
+
+</section>
+
+
+<!-- ================= FOOTER ================= -->
+
+<footer>
+
+    <div class="footer-logo">
+        ☕ Coffee
+    </div>
+
+    <p>
+        Fresh coffee. Good moments. Happy people.
+    </p>
+
+    <p class="copyright">
+        © 2026 Coffee. All Rights Reserved.
+    </p>
+
+</footer>
+
+
+<!-- ================= JAVASCRIPT ================= -->
+
+<script>
+
+
+/* =====================================================
+   COFFEE DATA
+===================================================== */
+
+const coffeePrices = {
+
+    "Espresso": 120,
+
+    "Cappuccino": 150,
+
+    "Latte": 160,
+
+    "Americano": 130,
+
+    "Mocha": 170,
+
+    "Cold Coffee": 180
+
+};
+
+
+/* =====================================================
+   ELEMENTS
+===================================================== */
+
+const coffeeItems =
+    document.getElementById("coffeeItems");
+
+const addCoffeeBtn =
+    document.getElementById("addCoffeeBtn");
+
+const selectedCoffees =
+    document.getElementById("selectedCoffees");
+
+const totalPrice =
+    document.getElementById("totalPrice");
+
+const orderResult =
+    document.getElementById("orderResult");
+
+const orderSubmitBtn =
+    document.getElementById("orderSubmitBtn");
+
+
+/* =====================================================
+   ADD ANOTHER COFFEE
+===================================================== */
+
+addCoffeeBtn.addEventListener("click", function () {
+
+    const coffeeItem =
+        document.createElement("div");
+
+    coffeeItem.className =
+        "coffee-item";
+
+    coffeeItem.innerHTML = `
+
+        <div class="form-group">
+
+            <label>
+                Select Coffee
+            </label>
+
+            <select
+                class="coffeeSelect"
+                required
+            >
+
+                <option value="">
+                    Select your coffee
+                </option>
+
+                <option value="Espresso">
+                    Espresso - ₹120
+                </option>
+
+                <option value="Cappuccino">
+                    Cappuccino - ₹150
+                </option>
+
+                <option value="Latte">
+                    Latte - ₹160
+                </option>
+
+                <option value="Americano">
+                    Americano - ₹130
+                </option>
+
+                <option value="Mocha">
+                    Mocha - ₹170
+                </option>
+
+                <option value="Cold Coffee">
+                    Cold Coffee - ₹180
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Quantity
+            </label>
+
+            <input
+                type="number"
+                class="quantityInput"
+                min="1"
+                value="1"
+                required
+            >
+
+        </div>
+
+
+        <button
+            type="button"
+            class="remove-coffee"
+        >
+            Remove
+        </button>
+
+    `;
+
+    coffeeItems.appendChild(coffeeItem);
+
+    updateTotal();
+
+});
+
+
+/* =====================================================
+   REMOVE COFFEE
+===================================================== */
+
+coffeeItems.addEventListener("click", function(event) {
+
+    if (
+        event.target.classList.contains("remove-coffee")
+    ) {
+
+        event.target
+            .closest(".coffee-item")
+            .remove();
+
+        updateTotal();
+
+    }
+
+});
+
+
+/* =====================================================
+   CALCULATE TOTAL
+===================================================== */
+
+function updateTotal() {
+
+    let total = 0;
+
+    const items =
+        document.querySelectorAll(".coffee-item");
+
+
+    items.forEach(function(item) {
+
+        const select =
+            item.querySelector(".coffeeSelect");
+
+        const quantity =
+            item.querySelector(".quantityInput");
+
+        const coffeeName =
+            select.value;
+
+        const qty =
+            Number(quantity.value || 0);
+
+        const price =
+            coffeePrices[coffeeName] || 0;
+
+        total +=
+            price * qty;
+
+    });
+
+
+    totalPrice.textContent =
+        "₹" + total;
+
+
+    updateSelectedCoffees();
+
+}
+
+
+/* =====================================================
+   SHOW SELECTED COFFEES
+===================================================== */
+
+function updateSelectedCoffees() {
+
+    selectedCoffees.innerHTML = "";
+
+    const items =
+        document.querySelectorAll(".coffee-item");
+
+
+    items.forEach(function(item) {
+
+        const select =
+            item.querySelector(".coffeeSelect");
+
+        const quantity =
+            item.querySelector(".quantityInput");
+
+        const coffeeName =
+            select.value;
+
+        const qty =
+            Number(quantity.value || 0);
+
+
+        if (coffeeName && qty > 0) {
+
+            const price =
+                coffeePrices[coffeeName];
+
+            const itemTotal =
+                price * qty;
+
+
+            const row =
+                document.createElement("div");
+
+            row.className =
+                "selected-coffee-row";
+
+
+            row.innerHTML = `
+
+                <span>
+                    ${coffeeName} × ${qty}
+                </span>
+
+                <strong>
+                    ₹${itemTotal}
+                </strong>
+
+            `;
+
+
+            selectedCoffees.appendChild(row);
+
+        }
+
+    });
+
+}
+
+
+/* =====================================================
+   UPDATE WHEN SELECT / QUANTITY CHANGES
+===================================================== */
+
+coffeeItems.addEventListener(
+    "change",
+    function() {
+
+        updateTotal();
+
+    }
+);
+
+
+coffeeItems.addEventListener(
+    "input",
+    function() {
+
+        updateTotal();
+
+    }
+);
+
+
+/* =====================================================
+   PLACE ORDER
+===================================================== */
+
+document
+    .getElementById("orderForm")
+    .addEventListener(
+        "submit",
+        async function(event) {
+
+
+        event.preventDefault();
+
+
+        /* =============================================
+           CUSTOMER DETAILS
+        ============================================= */
+
+        const customerName =
+            document
+                .getElementById("customerName")
+                .value
+                .trim();
+
+
+        const customerEmail =
+            document
+                .getElementById("customerEmail")
+                .value
+                .trim();
+
+
+        /* =============================================
+           GET SELECTED COFFEES
+        ============================================= */
+
+        const items =
+            document.querySelectorAll(".coffee-item");
+
+
+        const orders = [];
+
+
+        items.forEach(function(item) {
+
+            const select =
+                item.querySelector(".coffeeSelect");
+
+            const quantity =
+                item.querySelector(".quantityInput");
+
+
+            const coffeeName =
+                select.value;
+
+
+            const qty =
+                Number(quantity.value);
+
+
+            if (
+                coffeeName &&
+                qty > 0
+            ) {
+
+                const price =
+                    coffeePrices[coffeeName];
+
+
+                orders.push({
+
+                    coffeeName:
+                        coffeeName,
+
+                    quantity:
+                        qty,
+
+                    total:
+                        price * qty,
+
+                    unitPrice:
+                        price
+
+                });
+
+            }
+
+        });
+
+
+        /* =============================================
+           CHECK ORDER
+        ============================================= */
+
+        if (orders.length === 0) {
+
+            orderResult.textContent =
+                "Please select at least one coffee.";
+
+            return;
+
+        }
+
+
+        /* =============================================
+           CALCULATE GRAND TOTAL
+        ============================================= */
+
+        const grandTotal =
+            orders.reduce(
+                function(sum, item) {
+
+                    return sum + item.total;
+
+                },
+                0
+            );
+
+
+        /* =============================================
+           CREATE ORDER ID
+        ============================================= */
+
+        const orderId =
+            "COF-" +
+            Date.now();
+
+
+        /* =============================================
+           DISABLE BUTTON
+        ============================================= */
+
+        orderSubmitBtn.disabled = true;
+
+        orderSubmitBtn.textContent =
+            "Placing Order...";
+
+        orderResult.textContent =
+            "";
+
+
+        try {
+
+
+            /* =========================================
+               STEP 1
+               SAVE EACH COFFEE TO MYSQL
+            ========================================= */
+
+            for (
+                const order of orders
+            ) {
+
+
+                const formData =
+                    new URLSearchParams();
+
+
+                formData.append(
+                    "customerName",
+                    customerName
+                );
+
+
+                formData.append(
+                    "customerEmail",
+                    customerEmail
+                );
+
+
+                formData.append(
+                    "coffeeName",
+                    order.coffeeName
+                );
+
+
+                formData.append(
+                    "quantity",
+                    order.quantity
+                );
+
+
+                formData.append(
+                    "total",
+                    order.total
+                );
+
+
+                const response =
+                    await fetch(
+                        "api/orders",
+                        {
+
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/x-www-form-urlencoded"
+                            },
+
+                            body: formData
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok || !data.success) {
+
+                    throw new Error(
+                        data.message ||
+                        "Could not save order."
+                    );
+
+                }
+
+            }
+
+
+            /* =========================================
+               STEP 2
+               PREPARE EMAILJS ORDER LIST
+            ========================================= */
+
+            const emailOrders =
+                orders.map(function(order) {
+
+                    return {
+
+                        name:
+                            order.coffeeName,
+
+                        units:
+                            order.quantity,
+
+                        price:
+                            order.unitPrice,
+
+                        image_url:
+                            ""
+
+                    };
+
+                });
+
+
+            /* =========================================
+               STEP 3
+               EMAILJS PARAMETERS
+            ========================================= */
+
+            const templateParams = {
+
+                customer_name:
+                    customerName,
+
+                email:
+                    customerEmail,
+
+                order_id:
+                    orderId,
+
+                orders:
+                    emailOrders,
+
+                cost: {
+
+                    shipping:
+                        0,
+
+                    tax:
+                        0,
+
+                    total:
+                        grandTotal
+
+                }
+
+            };
+
+
+            /* =========================================
+               STEP 4
+               SEND EMAIL
+            ========================================= */
+
+            const emailResponse =
+                await emailjs.send(
+                    "service_jrpmezt",
+                    "template_aqm3dnj",
+                    templateParams
+                );
+
+
+            console.log(
+                "EmailJS success:",
+                emailResponse.status,
+                emailResponse.text
+            );
+
+
+            /* =========================================
+               STEP 5
+               SUCCESS MESSAGE
+            ========================================= */
+
+            orderResult.textContent =
+                "Order placed successfully! " +
+                "Confirmation email sent to " +
+                customerEmail +
+                ". Total: ₹" +
+                grandTotal;
+
+
+            /* =========================================
+               RESET FORM
+            ========================================= */
+
+            document
+                .getElementById("orderForm")
+                .reset();
+
+
+            /* =========================================
+               RESET COFFEE ITEMS
+            ========================================= */
+
+            coffeeItems.innerHTML = `
+
+                <div class="coffee-item">
+
+                    <div class="form-group">
+
+                        <label>
+                            Select Coffee
+                        </label>
+
+                        <select
+                            class="coffeeSelect"
+                            required
+                        >
+
+                            <option value="">
+                                Select your coffee
+                            </option>
+
+                            <option value="Espresso">
+                                Espresso - ₹120
+                            </option>
+
+                            <option value="Cappuccino">
+                                Cappuccino - ₹150
+                            </option>
+
+                            <option value="Latte">
+                                Latte - ₹160
+                            </option>
+
+                            <option value="Americano">
+                                Americano - ₹130
+                            </option>
+
+                            <option value="Mocha">
+                                Mocha - ₹170
+                            </option>
+
+                            <option value="Cold Coffee">
+                                Cold Coffee - ₹180
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Quantity
+                        </label>
+
+                        <input
+                            type="number"
+                            class="quantityInput"
+                            min="1"
+                            value="1"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+            `;
+
+
+            updateTotal();
+
+
+        } catch (error) {
+
+
+            console.error(
+                "Order error:",
+                error
+            );
+
+
+            orderResult.textContent =
+                "Order could not be completed. " +
+                "Please try again.";
+
+
+        } finally {
+
+
+            /* =========================================
+               ENABLE BUTTON AGAIN
+            ========================================= */
+
+            orderSubmitBtn.disabled =
+                false;
+
+
+            orderSubmitBtn.textContent =
+                "Place Order";
+
+        }
+
+    });
+
+
+/* =====================================================
+   INITIAL TOTAL
+===================================================== */
+
+updateTotal();
+
+
+</script>
+
+
+</body>
+
+</html>
