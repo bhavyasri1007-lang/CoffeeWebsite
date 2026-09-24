@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Coffee | Staff Verification</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #160d09;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 500px;
+            background: #24140d;
+            border: 1px solid #6b421d;
+            border-radius: 15px;
+            padding: 35px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .logo {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            color: #d4a017;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #c8bdb6;
+            margin-bottom: 30px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #6b421d;
+            border-radius: 8px;
+            background: #160d09;
+            color: white;
+            font-size: 16px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #d4a017;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 15px;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background: #d4a017;
+            color: #160d09;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #ffbf00;
+        }
+
+        #result {
+            margin-top: 25px;
+            text-align: left;
+        }
+
+        .success {
+            padding: 18px;
+            background: #17351f;
+            border: 1px solid #3d8b52;
+            border-radius: 10px;
+        }
+
+        .error {
+            padding: 18px;
+            background: #3a1717;
+            border: 1px solid #9b3d3d;
+            border-radius: 10px;
+        }
+
+        .order-info {
+            line-height: 1.8;
+            margin-top: 10px;
+        }
+
+        .serve-btn {
+            background: #d4a017;
+            margin-top: 18px;
+        }
+    </style>
+ <script src="https://unpkg.com/html5-qrcode"></script>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="logo">☕</div>
+
+        <h1>Staff Order Verification</h1>
+
+        <p class="subtitle">
+            Enter or scan the customer's Order ID
+        </p>
+
+        <input
+            type="text"
+            id="orderId"
+            placeholder="Enter Order ID"
+        >
+        <div id="qr-reader" style="margin-top: 20px;"></div>
+
+        <button
+           type="button"
+           onclick="startScanner()"
+           style="margin-top: 15px;">
+           📷 SCAN QR CODE
+        </button>
+
+        <button onclick="checkOrder()">
+            CHECK ORDER
+        </button>
+
+        <div id="result"></div>
+
+    </div>
+
+    <script>
+
+        async function checkOrder() {
+
+            const orderId =
+                document.getElementById("orderId").value.trim();
+
+            const result =
+                document.getElementById("result");
+
+            if (!orderId) {
+
+                result.innerHTML =
+                    `<div class="error">
+                        Please enter an Order ID.
+                    </div>`;
+
+                return;
+            }
+
+            result.innerHTML =
+                `<div class="success">
+                    Checking order...
+                </div>`;
+
+            try {
+
+                const response =
+                    await fetch(
+                        "api/verify-order?orderId="
+                        + encodeURIComponent(orderId)
+                    );
+
+                const data =
+                    await response.json();
+
+                if (data.success) {
+
+                    result.innerHTML = `
+                        <div class="success">
+
+                            <strong>✅ Order Found</strong>
+
+                            <div class="order-info">
+
+                                <div>
+                                    <strong>Order ID:</strong>
+                                    ${data.orderId}
+                                </div>
+
+                                <div>
+                                    <strong>Customer:</strong>
+                                    ${data.customerName}
+                                </div>
+
+                                <div>
+                                    <strong>Coffee:</strong>
+                                    ${data.coffeeName}
+                                </div>
+
+                                <div>
+                                    <strong>Quantity:</strong>
+                                    ${data.quantity}
+                                </div>
+
+                                <div>
+    <strong>Subtotal:</strong>
+    ₹${data.subtotal}
+</div>
+
+<div>
+    <strong>GST (5%):</strong>
+    ₹${data.gst}
+</div>
+
+<div>
+    <strong>Total:</strong>
+    ₹${data.total}
+</div>
+
+                                <div>
+                                    <strong>Payment:</strong>
+                                    ${data.paymentStatus}
+                                </div>
+
+                            </div>
+
+                            <button
+                                class="serve-btn"
+                                onclick="serveOrder('${data.orderId}')">
+
+                                SERVE ORDER
+
+                            </button>
+
+                        </div>
+                    `;
+
+                } else {
+
+                    result.innerHTML =
+                        `<div class="error">
+                            ❌ ${data.message}
+                        </div>`;
+                }
+
+            } catch (error) {
+
+                console.error(error);
+
+                result.innerHTML =
+                    `<div class="error">
+                        ❌ Could not connect to server.
+                    </div>`;
+            }
+        }
+
+
+        async function serveOrder(orderId) {
+
+            const result =
+                document.getElementById("result");
+
+            try {
+
+                const response =
+                    await fetch(
+                        "api/serve-order",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/x-www-form-urlencoded"
+                            },
+
+                            body:
+                                "orderId="
+                                + encodeURIComponent(orderId)
+                        }
+                    );
+
+                const data =
+                    await response.json();
+
+                if (data.success) {
+
+                    result.innerHTML =
+                        `<div class="success">
+
+                            <h3>☕ ORDER SERVED</h3>
+
+                            <p style="margin-top:10px;">
+                                Order ${orderId}
+                                has been successfully served.
+                            </p>
+
+                        </div>`;
+
+                } else {
+
+                    result.innerHTML =
+                        `<div class="error">
+                            ❌ ${data.message}
+                        </div>`;
+                }
+
+            } catch (error) {
+
+                console.error(error);
+
+                result.innerHTML =
+                    `<div class="error">
+                        ❌ Could not connect to server.
+                    </div>`;
+            }
+        }
+        let qrScanner = null;
+
+function startScanner() {
+
+    if (qrScanner !== null) {
+        return;
+    }
+
+    qrScanner = new Html5Qrcode("qr-reader");
+
+    qrScanner.start(
+        { facingMode: "environment" },
+
+        {
+            fps: 10,
+            qrbox: 250
+        },
+
+        function(decodedText) {
+
+            console.log("QR Code:", decodedText);
+
+            document.getElementById("orderId").value =
+                decodedText;
+
+            qrScanner.stop().then(function() {
+
+                qrScanner.clear();
+
+                qrScanner = null;
+
+                // Automatically check the order
+                checkOrder();
+
+            });
+
+        },
+
+        function(errorMessage) {
+            // QR not detected yet
+        }
+
+    ).catch(function(error) {
+
+        console.error("Camera error:", error);
+
+        alert(
+            "Could not access camera. Please allow camera permission."
+        );
+
+        qrScanner = null;
+    });
+}
+
+    </script>
+
+</body>
+
+</html>

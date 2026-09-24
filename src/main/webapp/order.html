@@ -252,15 +252,37 @@
             </div>
 
 
-            <!-- ================= PLACE ORDER ================= -->
+            <!-- ================= PAYMENT BUTTON ================= -->
+          <div class="payment-qr">
+    <h3>Scan & Pay</h3>
 
-            <button
-                type="submit"
-                class="order-submit"
-                id="orderSubmitBtn"
-            >
-                Place Order
+    <p>Scan the QR code to make your payment.</p>
+
+    <img
+        src="images/payment-qr.png"
+        alt="PhonePe Payment QR"
+    >
+</div>
+
+          <button
+             type="button"
+              class="order-submit"
+              id="payNowBtn"
+          >
+              Pay Now
             </button>
+
+
+<!-- ================= PLACE ORDER BUTTON ================= -->
+
+              <button
+                 type="submit"
+                  class="order-submit"
+                  id="orderSubmitBtn"
+                  style="display: none;"
+              >
+                   Place Order
+                </button>
 
 
             <p id="orderResult"></p>
@@ -340,6 +362,9 @@ const orderResult =
 const orderSubmitBtn =
     document.getElementById("orderSubmitBtn");
 
+const payNowBtn =
+    document.getElementById("payNowBtn");
+let paymentId = null;
 
 /* =====================================================
    ADD ANOTHER COFFEE
@@ -584,6 +609,138 @@ coffeeItems.addEventListener(
 
     }
 );
+/* =====================================================
+  PAY NOW
+===================================================== */
+
+payNowBtn.addEventListener("click", async function () {
+
+    const customerName =
+        document.getElementById("customerName").value.trim();
+
+    const customerEmail =
+        document.getElementById("customerEmail").value.trim();
+
+    if (!customerName || !customerEmail) {
+        alert("Please enter your name and email first.");
+        return;
+    }
+
+    const items =
+        document.querySelectorAll(".coffee-item");
+
+    let grandTotal = 0;
+
+    items.forEach(function(item) {
+
+        const select =
+            item.querySelector(".coffeeSelect");
+
+        const quantity =
+            item.querySelector(".quantityInput");
+
+        const coffeeName =
+            select.value;
+
+        const qty =
+            Number(quantity.value || 0);
+
+        if (coffeeName && qty > 0) {
+
+            const price =
+                coffeePrices[coffeeName] || 0;
+
+            grandTotal += price * qty;
+        }
+    });
+
+    if (grandTotal <= 0) {
+        alert("Please select at least one coffee.");
+        return;
+    }
+
+      paymentId =
+        "TEST-" + Date.now();
+
+    payNowBtn.disabled = true;
+    payNowBtn.textContent =
+        "Processing Payment...";
+
+    try {
+
+        const formData =
+            new URLSearchParams();
+
+        formData.append(
+            "amount",
+            grandTotal
+        );
+
+        formData.append(
+            "paymentId",
+            paymentId
+        );
+
+        const response =
+            await fetch(
+                "api/payment",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/x-www-form-urlencoded"
+                    },
+
+                    body: formData
+                }
+            );
+
+        const result =
+            await response.json();
+
+        if (result.success) {
+
+            alert(
+                "Payment verified successfully! ✅\n\n" +
+                "Payment ID: " +
+                paymentId
+            );
+
+            payNowBtn.style.display =
+                "none";
+
+            orderSubmitBtn.style.display =
+                "block";
+
+        } else {
+
+            alert(
+                result.message ||
+                "Payment verification failed."
+            );
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Payment error:",
+            error
+        );
+
+        alert(
+            "Could not connect to payment server."
+        );
+
+    } finally {
+
+        payNowBtn.disabled =
+            false;
+
+        payNowBtn.textContent =
+            "Pay Now";
+    }
+});
 
 
 /* =====================================================
@@ -694,16 +851,19 @@ document
            CALCULATE GRAND TOTAL
         ============================================= */
 
-        const grandTotal =
-            orders.reduce(
-                function(sum, item) {
+        const subtotal =
+    orders.reduce(
+        function(sum, item) {
 
-                    return sum + item.total;
+            return sum + item.total;
 
-                },
-                0
-            );
+        },
+        0
+    );
 
+const gst = subtotal * 0.05;
+
+const grandTotal = subtotal + gst;
 
         /* =============================================
            CREATE ORDER ID
@@ -742,7 +902,10 @@ document
 
                 const formData =
                     new URLSearchParams();
-
+                formData.append(
+                     "orderId",
+                      orderId
+                );
 
                 formData.append(
                     "customerName",
@@ -771,6 +934,10 @@ document
                 formData.append(
                     "total",
                     order.total
+                );
+                formData.append(
+                    "paymentId",
+                    paymentId
                 );
 
 
@@ -839,8 +1006,12 @@ document
                STEP 3
                EMAILJS PARAMETERS
             ========================================= */
-
+            const qrCodeUrl =
+                 "https://api.qrserver.com/v1/create-qr-code/?size=160x160&data="
+                + encodeURIComponent(orderId);
             const templateParams = {
+                qr_code:
+                    qrCodeUrl,
 
                 customer_name:
                     customerName,
@@ -854,18 +1025,13 @@ document
                 orders:
                     emailOrders,
 
-                cost: {
 
-                    shipping:
-                        0,
+                subtotal: subtotal,
 
-                    tax:
-                        0,
+                gst: gst,
 
-                    total:
-                        grandTotal
+                total: grandTotal
 
-                }
 
             };
 

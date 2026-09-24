@@ -2605,3 +2605,30 @@ body.home-page .hero {
     }
 
 }
+.payment-qr {
+    text-align: center;
+    margin: 25px auto;
+    padding: 20px;
+    max-width: 350px;
+    background: #24140d;
+    border: 1px solid #6b421d;
+    border-radius: 12px;
+}
+
+.payment-qr h3 {
+    color: #d4a017;
+    margin-bottom: 10px;
+}
+
+.payment-qr p {
+    color: #c8bdb6;
+    margin-bottom: 15px;
+}
+
+.payment-qr img {
+    width: 220px;
+    height: 220px;
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+}

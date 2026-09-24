@@ -16,14 +16,23 @@ public class DBConnection {
             System.getenv().getOrDefault("DB_USER", "root");
 
     private static final String DB_PASSWORD =
-            System.getenv().getOrDefault("DB_PASSWORD", "YOUR_LOCAL_MYSQL_PASSWORD");
+            System.getenv().getOrDefault(
+                "DB_PASSWORD", 
+                "NewPassword@123"
+                );
 
     public static Connection getConnection() throws SQLException {
 
-        return DriverManager.getConnection(
-                DB_URL,
-                DB_USER,
-                DB_PASSWORD
-        );
+    try {
+        Class.forName("com.mysql.cj.jdbc.Driver");
+    } catch (ClassNotFoundException e) {
+        throw new SQLException("MySQL JDBC Driver not found.", e);
     }
+
+    return DriverManager.getConnection(
+            DB_URL,
+            DB_USER,
+            DB_PASSWORD
+    );
+  }
 }
